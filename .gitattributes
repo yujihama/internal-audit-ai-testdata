@@ -1,0 +1,9 @@
+# 証跡ファイルは1バイトも変えない（改行コードの自動変換をしない）
+datasets/** -text
+*.pdf binary
+*.png binary
+*.jpg binary
+*.tif binary
+*.xlsx binary
+*.docx binary
+*.zip binary
