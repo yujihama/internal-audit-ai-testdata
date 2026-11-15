@@ -1,0 +1,6 @@
+実行: python run.py itinfra（証跡の生成 → 文字読取の参考値 → 正解表 → 検証 → 梱包 を順に行う）
+共通部品: common.py（暦・書式）、render.py（文書の描画）、degrade.py（画質の加工）、build.py（難版・対照版の出力）、fw.py（帳票の汎用レイアウト・正解表・検証）
+docs.py は販売プロセス版の帳票（印影の部品だけを使う）。実行には販売版の data.py / screens.py も同じフォルダに必要
+必要なもの: Python 3.11以降、reportlab / pymupdf / pillow / numpy / opencv-python-headless / openpyxl、tesseract（参考値のみ）、LibreOffice（正解表の再計算）
+フォント: Google Fonts の BIZ UDGothic(Regular/Bold)、BIZ UDMincho、Yomogi、Klee One、Zen Kurenaido、DotGothic16 を fonts/ に置く
+注意: 作業フォルダのパス（common.py の ROOT）は環境に合わせて書き換えること。乱数の種は固定のため、同じ内容が再生成される
