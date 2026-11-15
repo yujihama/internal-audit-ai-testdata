@@ -1,0 +1,7 @@
+実行順: build_p.py → ocr_ref.py 購買プロセス_検証データ_小 tmp_p（任意）→ book_p.py → verify_p.py → pack_p.py
+共通部品: common.py（暦・書式）、render.py（文書の描画）、degrade.py（画質の加工）、build.py（難版・対照版の出力）は販売プロセス版と共通
+必要なもの: Python 3.11以降、reportlab / pymupdf / pillow / numpy / opencv-python-headless / openpyxl、tesseract（ocr_ref.py のみ）
+フォント: Google Fonts の BIZ UDGothic(Regular/Bold)、BIZ UDMincho、Yomogi、Klee One、Zen Kurenaido、DotGothic16 を fonts/ に置く
+注意: 作業フォルダのパス（common.py の ROOT）は環境に合わせて書き換えること。乱数の種は固定のため、同じ内容が再生成される
+注意: book_p.py を実行し直した後は、正解表.xlsx の「集計」シートの数式を表計算ソフトで再計算すること
+規模の拡張: data_p.py のサンプル定義と build_p.py の加工の割り当て表（plans）を増やす
