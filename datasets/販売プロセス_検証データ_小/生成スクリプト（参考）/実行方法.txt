@@ -1,0 +1,5 @@
+実行順: build.py → ocr_ref.py（任意）→ book.py → verify.py → pack.py
+必要なもの: Python 3.11以降、reportlab / pymupdf / pillow / numpy / opencv-python-headless / openpyxl、tesseract（ocr_ref.py のみ）
+フォント: Google Fonts の BIZ UDGothic(Regular/Bold)、BIZ UDMincho、Yomogi、Klee One、Zen Kurenaido、DotGothic16 を fonts/ に置く
+注意: 作業フォルダのパス（common.py の ROOT）は環境に合わせて書き換えること。乱数の種は固定のため、同じ内容が再生成される
+規模の拡張: data.py のサンプル定義と build.py の加工の割り当て表（plans）を増やす
