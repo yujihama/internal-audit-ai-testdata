@@ -20,3 +20,18 @@ python3 -m venv .venv && .venv/bin/pip install pymupdf pillow numpy opencv-pytho
 ```
 
 加工名（`variants.py`）は `+` でつなげます：`raw` そのまま／`auto` 画像の状態を見て自動（白黒2値・網点ならならす、小さければ2倍に拡大）／`smooth` ならし／`up2` 2倍に拡大／`tile2x2` 重なりを付けて分割／`strict` 「知識で補正しない」指示を追加／`pdf` 元のPDFをそのまま渡す。
+
+## 押印の読み取り（`押印/`）
+
+実務版の読みにくい版（C_実務版_難）から、劣化の強い36ページ（7領域、印影104個）を選び、ページ画像を渡して印影の一覧（部署・日付・氏名）を答えさせます。正解（`gt.py`）は、同じページの読みやすい版（D_実務版_対照）の印影を拡大して目で読み取ったものです。
+
+```
+cd 押印
+python cand.py && python prep.py          # 押印のあるページを洗い出し、36ページを samples/ に作る
+python run.py gpt-6.2-sol raw             # ページをそのまま渡す
+python run.py gpt-6.2-sol raw+unsure      # 「確信がなければ ■」の指示を追加
+python run2.py gpt-6.2-sol                # 2段階（位置を答えさせ、切り出して拡大し、読み直す）
+python score.py                           # 採点
+```
+
+`summary_押印.csv`：2026-11-19 に実行した全条件の、ページごとの採点結果と誤りの内容。
