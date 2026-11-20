@@ -24,6 +24,11 @@ def build(var,path,prompt):
     for s in steps:
         if s=='raw': pass
         elif s=='strict': prompt+=STRICT
+        elif s=='roster':   # 名簿（押印しうる人の名字と部署）を渡して候補を絞る
+            from gt import GT
+            names=sorted({g[-1] for gs in GT.values() for g in gs if g[0]!='角印'}|set('佐藤 鈴木 高橋 田中 渡辺 伊藤 山本 中村 小林 加藤 吉田 山田 佐々木 松本 井上 木村 林 清水 山口 森'.split()))
+            depts=sorted({g[0] for gs in GT.values() for g in gs if len(g)==3}|set('総務課 人事課 営業3課 開発課 品質管理課 業務部 管理部 経理部'.split()))
+            prompt+='\n\n参考：日付印・認印の氏名は、次の名簿の名字のいずれかです（角印は対象外）。印影の字形と照らし合わせて、合うものを選んでください。名簿にあるというだけで推測で選ばず、字形から1つに絞れなければ ■ にしてください。\n名字：'+'、'.join(names)+'\n部署：'+'、'.join(depts)
         elif s=='unsure': prompt+='\n\n重要：少しでも確信が持てない文字は、もっともらしい名字や部署名で埋めずに、必ず ■ にしてください。誤って読むより ■ のほうが望ましいです。'
         elif s.startswith('up'):      # 拡大（なめらかに補間）
             f=float(s[2:]); im=im.resize((int(im.width*f),int(im.height*f)),Image.LANCZOS)

@@ -35,3 +35,17 @@ python score.py                           # 採点
 ```
 
 `summary_押印.csv`：2026-11-19 に実行した全条件の、ページごとの採点結果と誤りの内容。
+
+### 誤読を減らす（`ens.py`）
+
+複数の読み取り結果を突き合わせ、一致した項目だけ採用し、一致しなければ「■（読めない）」にします。
+
+```
+python run.py gpt-6.2-sol raw+roster      # 名簿（名字と部署の候補）を指示文に付けて、そのまま渡す
+python run.py gpt-6.2-sol auto+roster     # 同じく、自動の前処理をしてから
+python run.py gpt-6.2-sol up2+roster      # 同じく、2倍に拡大してから
+python ens.py all gpt-6.2-sol__raw+roster gpt-6.2-sol__auto+roster gpt-6.2-sol__up2+roster   # 3通りが全部一致した項目だけ採用
+python ens.py 2   gpt-6.2-sol__raw+roster gpt-6.2-sol__auto+roster gpt-6.2-sol__up2+roster   # 2通り以上の一致で採用
+```
+
+名簿は `variants.py` の `roster` で、正解に出てくる名字・部署に、出てこない名字20・部署8を混ぜたものです。
