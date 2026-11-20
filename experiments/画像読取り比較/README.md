@@ -49,3 +49,14 @@ python ens.py 2   gpt-6.2-sol__raw+roster gpt-6.2-sol__auto+roster gpt-6.2-sol__
 ```
 
 名簿は `variants.py` の `roster` で、正解に出てくる名字・部署に、出てこない名字20・部署8を混ぜたものです。
+
+### 名簿を使わずに誤読を減らす（自動の名簿・確信度）
+
+```
+python run.py gpt-6.2-sol raw && python run.py gpt-6.2-sol auto && python run.py gpt-6.2-sol up2   # 1回目（3通り）
+python run.py gpt-6.2-sol raw+self && python run.py gpt-6.2-sol auto+self   # 2回目：1回目で3通りが一致した名字・部署を、同じ領域の候補として渡す
+python ens.py all gpt-6.2-sol__raw+self gpt-6.2-sol__auto+self              # 2通りが一致した項目だけ採用
+python run.py gpt-6.2-sol raw+conf                                          # 項目ごとの確信度を答えさせる
+python ana.py                                                               # 設定（detail・effort）、自動の名簿、確信度、モデル間の照合の集計
+python cost.py                                                              # .budget_start より後の実行の推定額
+```

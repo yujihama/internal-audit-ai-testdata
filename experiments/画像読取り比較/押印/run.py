@@ -32,15 +32,39 @@ def call_or(model,parts,prompt,**kw):
                json={"model":model,"messages":[{"role":"user","content":content}],"max_tokens":4000}); j=r.json()
     if r.status_code!=200 or "choices" not in j: raise RuntimeError(f"{r.status_code} {str(j)[:300]}")
     return j["choices"][0]["message"]["content"] or "",j.get("usage",{})
+_SR={}
+def selfroster(model,area):
+    if (model,area) in _SR: return _SR[(model,area)]
+    import ens,score,glob
+    names,depts=set(),set()
+    for m in MAN:
+        if m['area']!=area: continue
+        lists=[]
+        for v in ('raw','auto','up2'):
+            fs=glob.glob(f"{RES}/{model}__{v}__{m['id']}.json")
+            p=score.parse(json.load(open(fs[0]))['text']) if fs else None
+            if p is not None: lists.append(p)
+        if len(lists)<3: continue
+        for o in ens.combine(lists,3):
+            if ens.ok(o.get('氏名')) and len(str(o['氏名']))<=4: names.add(score.n(o['氏名']))
+            if ens.ok(o.get('部署')): depts.add(score.n(o['部署']))
+    t=('\n\n参考：同じ会社の他の文書の印影から、これまでに確実に読み取れた名字と部署です。同じ人の印影が繰り返し出てくることが多いので、字形と照らし合わせる手がかりにしてください。'
+       'ただし、この一覧にない人や部署の印影もあります。一覧にあるというだけで選ばず、字形から判断できなければ ■ にしてください。\n名字：'+'、'.join(sorted(names))+'\n部署：'+'、'.join(sorted(depts)))
+    _SR[(model,area)]=t; return t
 def job(a):
     model,var,s,opts=a
     tag=f"{model.replace('/','_')}__{var}"+"".join(f"__{k}-{v}" for k,v in sorted(opts.items()))
     out=f"{RES}/{tag}__{s['id']}.json"
     if os.path.exists(out): return
     o={k:v for k,v in opts.items() if k!='rep'}
-    parts,prompt=variants.build(var,f"{W}/samples/{s['id']}.png",PROMPT)
+    extra=''
+    if '+self' in var:   # 自動の名簿：1回目の読み取り（そのまま・前処理・拡大）が一致した名字・部署を候補として渡す
+        extra=selfroster(model,s['area']); var_b=var.replace('+self','')
+    else: var_b=var
+    parts,prompt=variants.build(var_b,f"{W}/samples/{s['id']}.png",PROMPT)
+    prompt+=extra
     fn=call_or if '/' in model else call_openai
-    for t in range(4):
+    for t in range(2):
         try:
             t0=time.time(); txt,us=fn(model,parts,prompt,**o)
             if not txt.strip(): raise RuntimeError("empty")
